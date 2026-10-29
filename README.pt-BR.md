@@ -30,6 +30,16 @@ flowchart LR
 ```
 O LLM nunca calcula nada: só reescreve insights já calculados, e a resposta é descartada se tiver números que não estão na evidência. Sem `LLM_API_KEY` tudo roda localmente por regras.
 
+## Design
+Metáfora: quadro de despacho de cozinha com cupons impressos (`assets/style.css`, `ui.py`; fontes Barlow Condensed + IBM Plex Mono). Decisões aplicadas: um KPI dominante (taxa de atraso) com os demais menores numa grade assimétrica; estados de semáforo sempre com palavra e glifo, e metas editáveis na lateral; o cupom do "pior pedido" desenha preparo + entrega contra a marca do prazo prometido; selos FACT / HYPOTHESIS / TO DO com prioridade impacto x esforço; rótulos diretos no gráfico em vez de legenda.
+
+| Desktop 1440 px | Celular 390 px |
+|---|---|
+| ![desktop](docs/screenshots/desktop-1440-top.jpg) | ![celular](docs/screenshots/mobile-390-top.jpg) |
+| ![detalhe](docs/screenshots/desktop-1440-detail.jpg) | ![detalhe celular](docs/screenshots/mobile-390-detail.jpg) |
+
+As capturas foram feitas no Chrome com o app incorporado em exatamente 1440 e 390 px de largura (a janela do navegador não pôde ser reduzida). Foco de teclado e leitores de tela não foram testados com tecnologia assistiva.
+
 ## Execução
 ```bash
 python -m venv .venv && .venv\Scripts\activate

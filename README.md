@@ -30,6 +30,16 @@ flowchart LR
 ```
 The LLM never computes anything: it only rewrites already-computed insights, and its output is discarded if it contains numbers not present in the evidence. Without `LLM_API_KEY` the app runs fully on local rules.
 
+## Design
+Metaphor: a kitchen dispatch board with printed coupons (`assets/style.css`, `ui.py`; fonts Barlow Condensed + IBM Plex Mono). Applied decisions: one dominant KPI (late rate) with the others smaller in an asymmetric grid; traffic-light states always carry words and a glyph, with editable targets in the sidebar; the "worst ticket" coupon draws prep + ride time against the promised mark; insight seals (FACT / HYPOTHESIS / TO DO) with impact x effort priority; direct chart labels instead of a legend.
+
+| Desktop 1440 px | Mobile 390 px |
+|---|---|
+| ![desktop](docs/screenshots/desktop-1440-top.jpg) | ![mobile](docs/screenshots/mobile-390-top.jpg) |
+| ![detail](docs/screenshots/desktop-1440-detail.jpg) | ![mobile detail](docs/screenshots/mobile-390-detail.jpg) |
+
+Screenshots were taken in Chrome with the app embedded at exactly 1440 and 390 px wide (the browser window itself could not be shrunk). Keyboard focus and screen-reader behavior were not tested with assistive technology.
+
 ## Run
 ```bash
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
