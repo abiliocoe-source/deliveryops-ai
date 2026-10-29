@@ -70,10 +70,13 @@ python -m pytest -q
 ## Savings calculator
 Estimate = orders/month x manual minutes x automation share. Always labeled ESTIMATE; depends only on your inputs.
 
+## LLM integration: possible, not connected
+This is a portfolio demonstration and runs entirely in local mode (rules only). An optional adapter (`llm_summary` in `deliveryops/insights.py`) could call any OpenAI-compatible endpoint when `LLM_API_KEY` is set, and it rejects any answer containing numbers that are not in the evidence. **No real LLM connection was made or tested**, because it was unnecessary for this demo. Tests cover only the guard and the no-key fallback, so treat the LLM path as designed but unverified.
+
 ## Limitations
 - Synthetic data only demonstrates the pipeline. Rule thresholds are simple heuristics.
 - Insights show association, not causation. No n8n webhook (kept out for simplicity).
-- LLM path is untested against a real API (no key available); only the guard and fallback are tested.
+- LLM path: designed but never connected to a real API (unnecessary for the demo); only the guard and fallback are tested.
 
 ## Next steps
 Per-hour/zone analysis, statistical tests for differences between categories, webhook alerts.

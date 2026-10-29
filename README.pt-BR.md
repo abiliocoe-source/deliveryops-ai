@@ -70,10 +70,13 @@ python -m pytest -q
 ## Calculadora de economia
 Estimativa = pedidos/mês x minutos manuais x parcela automatizada. Sempre rotulada ESTIMATIVA; depende só das suas premissas.
 
+## Integração com LLM: possível, não conectada
+Este é um projeto de demonstração de portfólio e roda inteiramente em modo local (só regras). Um adaptador opcional (`llm_summary` em `deliveryops/insights.py`) poderia chamar qualquer endpoint compatível com OpenAI quando `LLM_API_KEY` estiver definida, e descarta qualquer resposta com números que não estejam na evidência. **Nenhuma conexão real com LLM foi feita ou testada**, porque era desnecessária para esta demo. Os testes cobrem só a trava e o fallback sem chave; trate o caminho com LLM como projetado, mas não verificado.
+
 ## Limitações
 - Dados sintéticos só demonstram o pipeline. Os limiares das regras são heurísticas simples.
 - Os insights mostram associação, não causalidade. Sem webhook n8n (omitido por simplicidade).
-- O caminho com LLM não foi testado com API real (sem chave); só a trava e o fallback são testados.
+- Caminho com LLM: projetado, mas nunca conectado a uma API real (desnecessário para a demo); só a trava e o fallback são testados.
 
 ## Próximos passos
 Análise por hora/região, testes estatísticos entre categorias, alertas via webhook.
