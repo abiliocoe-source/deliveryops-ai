@@ -31,14 +31,15 @@ flowchart LR
 O LLM nunca calcula nada: só reescreve insights já calculados, e a resposta é descartada se tiver números que não estão na evidência. Sem `LLM_API_KEY` tudo roda localmente por regras.
 
 ## Design
-Metáfora: quadro de despacho de cozinha com cupons impressos (`assets/style.css`, `ui.py`; fontes Barlow Condensed + IBM Plex Mono). Decisões aplicadas: um KPI dominante (taxa de atraso) com os demais menores numa grade assimétrica; estados de semáforo sempre com palavra e glifo, e metas editáveis na lateral; o cupom do "pior pedido" desenha preparo + entrega contra a marca do prazo prometido; selos FACT / HYPOTHESIS / TO DO com prioridade impacto x esforço; rótulos diretos no gráfico em vez de legenda.
+Direção de arte (estilo `framed-sheet` da taste-skill, aplicado dentro do Streamlit): o passe de uma cozinha. Um quadro de aço inox (a barra lateral) segura uma folha branca onde ficam os dados; o único matiz de gráfico é o laranja da marca; o texto é IBM Plex Sans e só as figuras de tabela usam IBM Plex Mono. A tela responde primeiro uma pergunta (a taxa de atraso semanal está abaixo da meta e onde ela quebra?), com o achado escrito sob o título a partir dos dados calculados. Os KPIs são uma faixa única dividida (sem tiles, sem sparklines) e o "pedido mais atrasado" é desenhado como um cupom de cozinha: tempo de preparo e entrega contra a marca do prazo, minutos excedidos em vermelho.
 
-| Desktop 1440 px | Celular 390 px |
+| Antes | Depois |
 |---|---|
-| ![desktop](docs/screenshots/desktop-1440-top.jpg) | ![celular](docs/screenshots/mobile-390-top.jpg) |
-| ![detalhe](docs/screenshots/desktop-1440-detail.jpg) | ![detalhe celular](docs/screenshots/mobile-390-detail.jpg) |
+| ![antes](docs/screenshots/before/desktop-1440-top.jpg) | ![depois](docs/screenshots/after/desktop-1440-overview.jpg) |
+| ![antes celular](docs/screenshots/before/mobile-390-top.jpg) | ![depois celular](docs/screenshots/after/mobile-390-overview.jpg) |
 
-As capturas foram feitas no Chrome com o app incorporado em exatamente 1440 e 390 px de largura (a janela do navegador não pôde ser reduzida). Foco de teclado e leitores de tela não foram testados com tecnologia assistiva.
+Mais: [tabela e cupom](docs/screenshots/after/desktop-1440-table-coupon.jpg), [gráfico no celular](docs/screenshots/after/mobile-390-chart.jpg). Não há imagens externas, então não há créditos.
+Conferido com o linter e o inspetor da skill (0 FAIL; o único aviso é a fonte de ícones do próprio Streamlit contada como terceira fonte no celular) e a olho no Chrome em 1440 e 390 px. O inspetor rodou numa cópia com esperas maiores para o Streamlit terminar de renderizar. Teclado e leitores de tela não foram testados com tecnologia assistiva. Defeito conhecido: no celular a linha do gráfico encosta no rótulo "target 10%".
 
 ## Execução
 ```bash

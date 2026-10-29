@@ -31,14 +31,15 @@ flowchart LR
 The LLM never computes anything: it only rewrites already-computed insights, and its output is discarded if it contains numbers not present in the evidence. Without `LLM_API_KEY` the app runs fully on local rules.
 
 ## Design
-Metaphor: a kitchen dispatch board with printed coupons (`assets/style.css`, `ui.py`; fonts Barlow Condensed + IBM Plex Mono). Applied decisions: one dominant KPI (late rate) with the others smaller in an asymmetric grid; traffic-light states always carry words and a glyph, with editable targets in the sidebar; the "worst ticket" coupon draws prep + ride time against the promised mark; insight seals (FACT / HYPOTHESIS / TO DO) with impact x effort priority; direct chart labels instead of a legend.
+Art direction (taste-skill style `framed-sheet`, applied inside Streamlit): a kitchen pass. A stainless-steel frame (the sidebar) holds a white sheet where the data sits; the one chart hue is the brand orange; text is IBM Plex Sans and only table figures use IBM Plex Mono. The screen answers one question first (is the weekly late rate holding under target, and where does it break?), with the finding written under the title from the computed data. KPIs are a single divided strip (no tiles, no sparklines), and the "most late order" is drawn as a kitchen ticket: prep and ride time against the promised mark, minutes over in red.
 
-| Desktop 1440 px | Mobile 390 px |
+| Before | After |
 |---|---|
-| ![desktop](docs/screenshots/desktop-1440-top.jpg) | ![mobile](docs/screenshots/mobile-390-top.jpg) |
-| ![detail](docs/screenshots/desktop-1440-detail.jpg) | ![mobile detail](docs/screenshots/mobile-390-detail.jpg) |
+| ![before](docs/screenshots/before/desktop-1440-top.jpg) | ![after](docs/screenshots/after/desktop-1440-overview.jpg) |
+| ![before mobile](docs/screenshots/before/mobile-390-top.jpg) | ![after mobile](docs/screenshots/after/mobile-390-overview.jpg) |
 
-Screenshots were taken in Chrome with the app embedded at exactly 1440 and 390 px wide (the browser window itself could not be shrunk). Keyboard focus and screen-reader behavior were not tested with assistive technology.
+More: [table and ticket](docs/screenshots/after/desktop-1440-table-coupon.jpg), [mobile chart](docs/screenshots/after/mobile-390-chart.jpg). No external images are used, so there is nothing to credit.
+Checked with the skill's linter and inspector (0 FAIL; the one warning is Streamlit's own icon font counted as a third typeface on phones) and by eye in Chrome at 1440 and 390 px. The inspector was run on a copy with longer wait times so Streamlit could finish rendering. Keyboard use and screen readers were not tested with assistive technology. Known flaw: on a phone the chart line touches the "target 10%" label.
 
 ## Run
 ```bash

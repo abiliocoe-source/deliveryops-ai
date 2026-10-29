@@ -5,3 +5,4 @@ __pycache__/
 .env
 *.log
 .streamlit/secrets.toml
+.taste-skill/
