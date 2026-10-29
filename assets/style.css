@@ -101,7 +101,3 @@ svg.spark{display:block;flex:none}
   .kpi-num{font-size:1.6rem}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
-/* multiselect chips: neutral ink so the orange stays reserved for the data */
-[data-baseweb="tag"]{background:var(--ink)!important}
-[data-baseweb="tag"] span{color:#fff!important}
