@@ -1,86 +1,101 @@
 # DeliveryOps AI
 
-Delivery-operations dashboard with a small "insights agent". **All bundled data is synthetic/fictional.** Portuguese version: [README.pt-BR.md](README.pt-BR.md).
+A dashboard for small delivery kitchens. Upload a CSV of orders and it tells you how often you're late, which category is dragging the number up, and what to look at first.
 
-## Problem
-Small delivery businesses have order data but no quick way to see late/cancelled orders, compare categories and decide what to fix first.
+[![tests](https://github.com/abiliocoe-source/deliveryops-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/abiliocoe-source/deliveryops-ai/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.11%2B-blue)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-## Solution
-Upload a CSV (or use the built-in fictional dataset). The app validates it, computes deterministic KPIs, shows a filterable dashboard, and generates insights split into **facts**, **hypotheses** and **recommendations** (prioritized by impact/effort, each citing evidence). Reports export to Markdown and CSV.
+![Overview: weekly late rate against the 10% target, KPI strip and category table](docs/screenshots/overview.jpg)
 
-## Stack and why
-| Tool | Why |
+[Leia em português](README.pt-BR.md)
+
+## Why
+
+A restaurant doing delivery usually has its order history in a spreadsheet export and no time to analyse it. The questions are simple: are we late more often than last month? Is it the pizzas or the burgers? Is it the kitchen or the ride? Getting those answers shouldn't need a BI tool.
+
+## What it does
+
+You upload a CSV, or use the built-in sample of 1,200 made-up orders. The app checks the file first. Missing columns stop the import with a message saying which ones. Bad rows (duplicate IDs, unreadable dates, negative times, ratings outside 1 to 5, unknown status) are dropped and the app tells you how many and why, instead of failing or silently ignoring them.
+
+Then it shows:
+
+- a KPI strip (late rate, cancel rate, orders, prep time, delivery time, rating), each with the change against the previous period;
+- late rate, cancel rate, prep or delivery time over days, weeks or months, with your target drawn on the two rate charts;
+- a table by category, and the order that ran latest drawn as a kitchen ticket: prep and ride time against the promised time, with the minutes over in red;
+- an **Insights** tab that splits what it found into facts, hypotheses and recommendations.
+
+That last split is the part I care most about. "Pizza has the highest late rate" is a fact, and it comes with the numbers. "Longer prep in Pizza may be contributing" is a hypothesis, and the app says it isn't confirmed. "Review the Pizza kitchen workflow" is a recommendation, ranked by a rough impact/effort score. Nothing is presented as a cause.
+
+You can export the report as Markdown and the filtered orders as CSV. There's also a small time-savings calculator, clearly labelled as an estimate based only on what you type in.
+
+## How the numbers are defined
+
+| KPI | Definition |
 |---|---|
-| Python + Pandas | simple, testable KPI logic |
-| Streamlit | fast UI with filters, upload and downloads |
-| Plotly | interactive charts |
-| pytest | unit tests incl. edge cases |
-| `requests` (optional) | call any OpenAI-compatible LLM endpoint |
+| Late | Delivered, and prep + delivery minutes > promised minutes |
+| Late rate | Late orders / delivered orders (cancelled orders don't count) |
+| Cancel rate | Cancelled / all orders |
+| Avg prep, avg delivery | Delivered orders only |
+| Avg rating | Only orders that have a rating |
 
-## Architecture
-```mermaid
-flowchart LR
-  CSV[CSV upload / synthetic data] --> V[validate]
-  V --> M[metrics: KPIs, by category, over time]
-  M --> I[insights: rules]
-  I -. optional .-> L[LLM summary + number guard]
-  M --> UI[Streamlit dashboard]
-  I --> UI
-  UI --> E[export MD / CSV]
-```
-The LLM never computes anything: it only rewrites already-computed insights, and its output is discarded if it contains numbers not present in the evidence. Without `LLM_API_KEY` the app runs fully on local rules.
+If a denominator is zero the app shows `n/a`. A 0% late rate on zero deliveries would look like great service, which it isn't.
 
-## Design
-Art direction (taste-skill style `framed-sheet`, applied inside Streamlit): a kitchen pass. A stainless-steel frame (the sidebar) holds a white sheet where the data sits; the one chart hue is the brand orange; text is IBM Plex Sans and only table figures use IBM Plex Mono. The screen answers one question first (is the weekly late rate holding under target, and where does it break?), with the finding written under the title from the computed data. KPIs are a single divided strip (no tiles, no sparklines), and the "most late order" is drawn as a kitchen ticket: prep and ride time against the promised mark, minutes over in red.
+## Stack
 
-| Before | After |
-|---|---|
-| ![before](docs/screenshots/before/desktop-1440-top.jpg) | ![after](docs/screenshots/after/desktop-1440-overview.jpg) |
-| ![before mobile](docs/screenshots/before/mobile-390-top.jpg) | ![after mobile](docs/screenshots/after/mobile-390-overview.jpg) |
+Python and pandas for validation and KPIs, Streamlit for the interface, Plotly for the chart, pytest and GitHub Actions for tests.
 
-More: [table and ticket](docs/screenshots/after/desktop-1440-table-coupon.jpg), [mobile chart](docs/screenshots/after/mobile-390-chart.jpg). No external images are used, so there is nothing to credit.
-Checked with the skill's linter and inspector (0 FAIL; the one warning is Streamlit's own icon font counted as a third typeface on phones) and by eye in Chrome at 1440 and 390 px. The inspector was run on a copy with longer wait times so Streamlit could finish rendering. Keyboard use and screen readers were not tested with assistive technology. Known flaw: on a phone the chart line touches the "target 10%" label.
+All calculations are plain pandas in `deliveryops/metrics.py`, deterministic and covered by tests. That was deliberate: a language model can summarise numbers, but it shouldn't be the thing producing them.
 
-## Run
+## Running it
+
 ```bash
+git clone https://github.com/abiliocoe-source/deliveryops-ai.git
+cd deliveryops-ai
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 streamlit run app.py
 ```
-Optional LLM: copy `.env.example`, set `LLM_API_KEY` (and optionally `LLM_BASE_URL`, `LLM_MODEL`) as environment variables. Never commit real keys.
 
-## CSV format
-Columns: `order_id, order_date, category, status (delivered|cancelled), prep_minutes, delivery_minutes, promised_minutes, rating`. Invalid rows (duplicates, bad dates, negative times, ratings outside 1-5, unknown status) are removed and reported; missing columns stop the import with a clear message.
+Tests:
 
-## KPI definitions
-- **Late**: delivered and `prep + delivery > promised_minutes`. **Late rate** = late / delivered.
-- **Cancel rate** = cancelled / all orders.
-- **Avg prep/delivery**: delivered orders only. **Avg rating**: rated orders only.
-- Empty denominators return `n/a`, never a fake 0.
-
-## Test
 ```bash
+pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
-## Measured results (seed 42, 1200 fictional orders)
-- 13 pytest tests pass (local run).
-- Dataset KPIs: late rate 8.2%, cancel rate 5.0%, avg rating 3.90. By construction Pizza has the highest late rate (16.1%) and late rate rises over the 6 months. These patterns were put there by the generator; they are **not** real-world findings.
-- The Streamlit app was smoke-tested headlessly (no exceptions, KPIs render). It has **not** been visually inspected in a browser.
+### CSV format
 
-## Savings calculator
-Estimate = orders/month x manual minutes x automation share. Always labeled ESTIMATE; depends only on your inputs.
+```
+order_id, order_date, category, status, prep_minutes, delivery_minutes, promised_minutes, rating
+```
 
-## LLM integration: possible, not connected
-This is a portfolio demonstration and runs entirely in local mode (rules only). An optional adapter (`llm_summary` in `deliveryops/insights.py`) could call any OpenAI-compatible endpoint when `LLM_API_KEY` is set, and it rejects any answer containing numbers that are not in the evidence. **No real LLM connection was made or tested**, because it was unnecessary for this demo. Tests cover only the guard and the no-key fallback, so treat the LLM path as designed but unverified.
+`status` is `delivered` or `cancelled`. The sidebar has a button to download the sample file if you want a template.
+
+### Optional: LLM summary
+
+If `LLM_API_KEY` is set (see `.env.example`), the Insights tab can ask any OpenAI-compatible endpoint for a three-sentence summary. The summary is thrown away if it contains any number that doesn't appear in the computed insights. I haven't connected this to a real API; the tests cover the number check and the fallback when there's no key.
+
+## Project layout
+
+```
+deliveryops/
+  data.py      sample data generator and CSV validation
+  metrics.py   KPI calculations
+  insights.py  rules that produce facts, hypotheses and recommendations
+  export.py    Markdown report and CSV export
+  savings.py   time-savings estimate
+app.py, ui.py  Streamlit app
+```
 
 ## Limitations
-- Synthetic data only demonstrates the pipeline. Rule thresholds are simple heuristics.
-- Insights show association, not causation. No n8n webhook (kept out for simplicity).
-- LLM path: designed but never connected to a real API (unnecessary for the demo); only the guard and fallback are tested.
 
-## Next steps
-Per-hour/zone analysis, statistical tests for differences between categories, webhook alerts.
+The sample data is synthetic and the patterns in it were put there on purpose: Pizza is slower, and delays get worse over the six months. Those are not findings about real restaurants. The insight rules use simple thresholds, and the app shows association, not cause.
 
-## Demo (2 min)
-See [DEMO.md](DEMO.md).
+Ideas for next steps: breaking delays down by hour and delivery zone, and a significance test before calling one category worse than another.
+
+Interface notes are in [docs/DESIGN.md](docs/DESIGN.md), and [DEMO.md](DEMO.md) is a two-minute walkthrough.
+
+## License
+
+[MIT](LICENSE)
