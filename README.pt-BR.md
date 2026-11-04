@@ -8,7 +8,7 @@ Um painel para pequenas cozinhas de delivery. Você sobe um CSV de pedidos e ele
 
 ![Visão geral: taxa de atraso semanal contra a meta de 10%, faixa de KPIs e tabela por categoria](docs/screenshots/overview.jpg)
 
-A interface está em inglês. [Read in English](README.md).
+**Demo:** https://deliveryops-ai.streamlit.app/ · A interface está em inglês. [Read in English](README.md).
 
 ## Por quê
 

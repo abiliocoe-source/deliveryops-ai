@@ -8,7 +8,7 @@ A dashboard for small delivery kitchens. Upload a CSV of orders and it tells you
 
 ![Overview: weekly late rate against the 10% target, KPI strip and category table](docs/screenshots/overview.jpg)
 
-[Leia em português](README.pt-BR.md)
+**Live demo:** https://deliveryops-ai.streamlit.app/ · [Leia em português](README.pt-BR.md)
 
 ## Why
 
